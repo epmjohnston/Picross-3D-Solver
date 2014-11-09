@@ -1,2 +1,3 @@
 *.pyc
 *.cnf
+.DS_Store
