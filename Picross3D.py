@@ -6,7 +6,7 @@ for Andy Exley's Artificial Intelligence class, Carleton College, Spring 2014
 Utilizes SATSolver.py and zChaff to solve Picross 3D puzzles using propositional logic.
 Displays 3D solution using VPython.
 
-Does not support puzzles with multiple grouping (circle or square numbers) (yet).
+Does not support puzzles with multiple grouping (circle or square numbers).
 """
 
 import sys
@@ -101,7 +101,7 @@ class PicrossPuzzle:
     def makePLSentences(self):
         """
         Constructs clauses in KB (self.clauses).
-        Does not yet handle circles or squares.
+        Does not handle circles or squares.
         """
         KB = []
         # look at each side of the input puzzle
@@ -247,8 +247,8 @@ class PicrossPuzzle:
                                    length = scale,
                                    height = scale,
                                    width = scale,
-                                   color = v.color.blue)
-
+                                   color = v.color.blue,
+                                   opacity = 0.5)
                         # display undefined blocks in red
                         if self.solution[x][y][z] == -1:
                             block.color = v.color.red
@@ -276,7 +276,7 @@ how to input a puzzle, and the implementation of this solver.
     infile.close()
 
     puzz.solve()
-#    puzz.printSolution()
+    puzz.printSolution()
     puzz.displaySolution3D(3)
 
 if __name__ == "__main__":

@@ -1,0 +1,119 @@
+**How to Run Picross 3D Solver**
+
+USAGE: python Picross3D.py <filename>
+    <filename>: a plain text file that contains an unsolved puzzle,
+        formatted as detailed below.
+
+
+**About Picross 3D**
+
+Picross 3D is a 3D puzzle game, derived from the two-dimensional logic puzzle
+Picross, AKA Hanjie, Nonograms, Griddlers, Oekaki or one of many other names.
+
+The player starts with a large rectangular prism made up of smaller blocks, the
+sides of which have numbers written on them. These numbers indicate how many
+blocks in the stack associated with that number will be present in the solution
+(see below for what "associated with" means). The player proceeds by destroying
+all blocks that will not be present in the solution until a 3D image appears
+and the puzzle is solved.
+
+Not every side of every block is given a number; for those stacks, any number
+of blocks could be in the solution. Some numbers have circles or squares around
+them. If a number has a circle around it, the blocks in that stack in the
+solution will be in exactly two groups, separated by at least one space. If a
+number has a square around it, the blocks in that stack in the solution will be
+in greater than two groups, each separated by at least one space. If a number
+is unmarked, the blocks in that stack in the solution will be in exactly one
+group, all next to each other.
+
+For more, see http://en.wikipedia.org/wiki/Nonogram
+
+
+**How to input puzzles for Picross3D.py**
+
+Two puzzles are provided: RaspberryPuzzle.txt and LittlePuzzle.txt
+
+Given a Picross 3D puzzle:
+
+             ________________
+             \\  j \  k \  l \
+             |\\____\____\____\<--- side 1
+             |p\\  m \  n \  o \
+             \ |\\____\____\____\
+             |\|q|    |    |    |
+             |r\ |  a |  b |  c |
+   side 2--->\ |\|____|____|____|
+             |\|s|    |    |    |
+             |t\ |  d |  e |  f |<--- side 0
+             \ |\|____|____|____|
+              \|u|    |    |    |
+               \ |  g |  h |  i |
+                \|____|____|____|
+
+(In this puzzle, the stack of blocks associated with b includes the blocks marked with k and n. The stack associated with m includes the blocks marked with a, d, and g. The stack associated with s includes the blocks marked d, e, and f. And so on.)
+
+With axes:
+
+            |
+       x\   |y
+    width\  |height
+          \ |
+           \|
+    ---------
+        z
+      depth
+
+The file given to Picross3D.py should include:
+
+width height depth
+<empty newline>
+side 0
+<empty newline>
+side 1
+<empty newline>
+side 2
+<EOF>
+
+So, the input file for the above puzzle should look like:
+
+2 3 3
+
+a b c
+d e f
+g h i
+
+j k l
+m n o
+
+p q
+r s
+t u
+
+Where each character (a-u) should be replaced with
+either the numeral that appears at that block
+(surrounded by () for a circled number or [] for a square),
+or a dash, -, for a blank square.
+
+
+**How Picross 3D Solver Works**
+
+Picross3D.py uses propositional logic and the zchaff satisfiability solver
+(https://www.princeton.edu/~chaff/zchaff.html) to determine which blocks should
+be in the solution, and which should be destroyed. It then solves the puzzle and
+stores the solution as a 3D list of 0s and 1s, where 0s are blocks that should
+be destroyed and 1s are blocks that are present in the solution.
+VPython (vpython.org) then displays a 3D representation of this solution.
+
+Picross3D.py cannot handle circles or squares around numbers (multiple groupings),
+only plain numbers (one grouping) and unknowns.
+
+More specifically, Picross3D.py constructs propositional logic sentences for
+each stack in the puzzle that state, where numBlocks is the number on the side
+of the stack in question:
+1) there no more than numBlocks blocks in this stack in the solution
+2) there are no fewer than numBlocks blocks in this stack in the solution
+3) all blocks in this stack in the solution are adjacent
+
+These sentences are then added to the knowledge base, and each literal is tested
+against the logic base using zchaff as to whether it is true (whether the
+corresponding block is in the solution).
